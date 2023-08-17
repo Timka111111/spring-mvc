@@ -24,6 +24,10 @@ public class StudentRepository {
         ));
     }
 
+    public void addStudent(Student student) {
+        studentList.add(student);
+    }
+
     public List<Student> getStudentList() {
         return Collections.unmodifiableList(studentList);
     }
