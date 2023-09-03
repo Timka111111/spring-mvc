@@ -1,41 +1,30 @@
 package kz.timka.springmvc.repositories;
 
-import jakarta.annotation.PostConstruct;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import kz.timka.springmvc.models.Student;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-@Component
-public class StudentRepository {
-    private List<Student> studentList;
+@Repository
+public interface StudentRepository extends JpaRepository<Student, Long> {
 
+    // select s from Student s where s.score between ?1 and ?2
+    List<Student> findAllByScoreBetween(Integer min, Integer max);
 
-    @PostConstruct
-    public void init() {
-        studentList = new ArrayList<>(List.of(
-                new Student(1L, "Bob"),
-                new Student(2L, "Jack"),
-                new Student(3L, "Antony"),
-                new Student(4L, "Margaret"),
-                new Student(5L, "Jane")
-        ));
-    }
+    Optional<Student> findByName(String name);
 
-    public void addStudent(Student student) {
-        studentList.add(student);
-    }
+    @Query("select s from Student s where s.score < 20")
+    List<Student> findAllLowRatingStudents();
 
-    public List<Student> getStudentList() {
-        return Collections.unmodifiableList(studentList);
-    }
+    @Query("select s.score from Student s where s.name = ?1")
+    Integer hqlGetScoreByName(String name);
+
+    @Query(value = "select score from students where name = :name", nativeQuery = true)
+    Integer sqlGetScoreByName(String name);
 
 
-    public Student findById(Long id) {
-        return studentList.stream().filter(s -> s.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Student not found by id: " + id));
-    }
 }
