@@ -14,6 +14,8 @@ public class Student {
     @Column(name = "score")
     private int score;
 
+    @Column(name = "secret_key")
+    private String secretKey;
 
     public Student() {
     }
@@ -46,5 +48,13 @@ public class Student {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

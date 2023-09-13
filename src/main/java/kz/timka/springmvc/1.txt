@@ -1,1 +1,23 @@
-JDBC -> Hibernate -> Spring Data JPA
+GET     api/v1/students
+        api/v1/students/{id}?password="adssadas"
+
+POST    api/v1/students   {
+                    part_name = 10,
+                    max_score = 50,
+                    password="adssadas"
+                    }
+
+PUT     api/v1/students {
+                       id:10,
+                       name:asds
+                    }
+
+DELETE  api/v1/students
+        api/v1/students/{id}
+
+PATCH   api/v1/students
+
+
+api/v1/weather
+api/v2/weather
+api/v3/weather

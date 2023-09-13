@@ -1,18 +1,16 @@
 package kz.timka.springmvc.controllers;
 
-import kz.timka.springmvc.exceptions.AppError;
+import kz.timka.springmvc.exceptions.ResourceNotFoundException;
+import kz.timka.springmvc.dto.StudentDto;
 import kz.timka.springmvc.models.Student;
 import kz.timka.springmvc.repositories.StudentRepository;
 import kz.timka.springmvc.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
+@RequestMapping("/api/v1/students")
 public class StudentController {
     private StudentService studentService;
     private StudentRepository studentRepository;
@@ -23,47 +21,50 @@ public class StudentController {
     }
 
 
-
-
-    @GetMapping("/students")
-    public List<Student> getAllStudent() {
-        return studentService.findAll();
-    }
-
-
-    @GetMapping("/students/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
-        Optional<Student> student = studentService.findById(id);
-        if(student.isPresent()) {
-            return new ResponseEntity<>(student.get(), HttpStatus.OK);
+    @GetMapping("")
+    public Page<StudentDto> getAllStudent(
+            @RequestParam(name = "p", defaultValue = "1") Integer page,
+            @RequestParam(name = "min_score", required = false) Integer minScore,
+            @RequestParam(name = "max_score", required = false) Integer maxScore,
+            @RequestParam(name = "part_name", required = false) String partName
+    ) {
+        if(page < 1) {
+            page = 1;
         }
-        return new ResponseEntity<>(
-                new AppError(HttpStatus.NOT_FOUND.value(), "Student not found by id: " + id)
-                ,HttpStatus.NOT_FOUND);
+
+        return studentService.find(minScore, maxScore, partName, page).map(
+                s -> new StudentDto(s)
+        );
+    }
+
+    @PostMapping()
+    public Student saveStudent(@RequestBody Student student) {
+        student.setId(null);
+        return studentService.save(student);
     }
 
 
-    @GetMapping("/students/delete/{id}")
+    @GetMapping("/{id}")
+    public Student getStudentById(@PathVariable Long id) {
+        return studentService.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Student not found by id: " + id));
+    }
+
+    @PutMapping()
+    public Student updateStudent(@RequestBody Student student) {
+        if(student.getId() == null) throw new RuntimeException(); //TODO
+        return studentService.save(student);
+    }
+
+
+
+
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         studentService.deleteById(id);
     }
 
-    @GetMapping("/students/change_score")
-    public void changeScore(@RequestParam Long studentId, @RequestParam Integer delta) {
-        studentService.changeScore(studentId, delta);
-    }
-
-    @GetMapping("/students/score_between")
-    public List<Student> findStudentsByScoreBetween(
-            @RequestParam(defaultValue = "0") Integer min,
-            @RequestParam(defaultValue = "100") Integer max) {
-        return studentService.findStudentsByScoreBetween(min, max);
-    }
 
 
-    @GetMapping("/demo")
-    public Object demo(@RequestParam String name) {
-        return studentRepository.sqlGetScoreByName(name);
-    }
 
 }

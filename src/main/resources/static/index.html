@@ -2,35 +2,66 @@
 <html ng-app="app">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
     <script src="index.js"></script>
 </head>
 <body>
-  <div class="container" ng-controller="indexController">
+<div class="container" ng-controller="indexController">
+
+    <form novalidate ng-submit="loadStudents()">
+        <div class="form-floating input-group-sn">
+            <input type="text" class="form-control" id="filterName" placeholder="" ng-model="filter.part_name">
+            <label for="filterName">Имя студента</label>
+        </div>
+        <p></p>
+        <div class="form-floating input-group-sn">
+            <input type="number" class="form-control" id="filterMinScore" placeholder="" ng-model="filter.min_score">
+            <label for="filterMinScore">Мин. балл</label>
+        </div>
+        <p></p>
+        <div class="form-floating input-group-sn">
+            <input type="number" class="form-control" id="filterMaxScore" placeholder="" ng-model="filter.max_score">
+            <label for="filterMaxScore">Макс. балл</label>
+        </div>
+        <p></p>
+        <button class="btn btn-outline-warning btn-sm" style="width: 100%" type="submit">Применить</button>
+    </form>
+
     <h3>Список студентов</h3>
     <table class="table table-hover">
-      <tr>
-        <td>ID</td>
-        <td>Name</td>
-      </tr>
-      <tbody>
+        <tr>
+            <td>ID</td>
+            <td>Name</td>
+        </tr>
+        <tbody>
         <tr ng-repeat="s in studentList">
-          <td>{{s.id}}</td>
-          <td>{{s.name}}</td>
-          <td>
-              <button class="btn btn-primary" ng-click="changeScore(s.id, -5)">-</button>
-              {{s.score}}
-              <button class="btn btn-primary" ng-click="changeScore(s.id, 5)">+</button>
-          </td>
+            <td>{{s.id}}</td>
+            <td>{{s.name}}</td>
+            <td>{{s.score}}</td>
             <td>
                 <button class="btn btn-danger" ng-click="deleteStudent(s.id)">Delete</button>
             </td>
         </tr>
-      </tbody>
+        </tbody>
     </table>
-  </div>
+    <p></p>
+
+    <h3>Сохранить студента</h3>
+    <form novalidate ng-submit="createStudent()">
+        <input class="form-control" type="text" placeholder="Имя" ng-model="newStudent.name">
+        <p></p>
+        <input class="form-control" type="number" placeholder="Балл" ng-model="newStudent.score">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Сохранить студента</button>
+    </form>
+
+
+
+</div>
 </body>
 </html>
